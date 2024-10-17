@@ -1,0 +1,24 @@
+name: Test
+
+on:
+  push:
+
+concurrency:
+  group: rust-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  installing:
+    name: Check installing
+    strategy:
+      matrix:
+        include:
+        - os: ubuntu-latest
+          libs: libpcsclite-dev libdbus-1-dev
+        - os: macos-latest
+        - os: windows-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - run: sudo apt-get update && sudo apt-get install -y ${{ matrix.libs }}
+        if: ${{ matrix.libs }}
+      - run: cargo install rsop
